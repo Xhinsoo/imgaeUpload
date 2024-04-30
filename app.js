@@ -2,23 +2,29 @@ const { error } = require("console");
 const express = require("express");
 const app = express();
 const path = require("path");
-const ejsMate = require("ejs-mate")
+const ejsMate = require("ejs-mate");
 
 
-// app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({extended:true}))
 app.set("view engine", "ejs")
 
+
+const imgArray = [ ];
+
 app.get("/home", (req,res,next)=>{
-    res.render("home")
+    const image = imgArray;
+    res.render("home", {image})
 })
 
+app.post("/home", (req,res)=>{
+    const {image} = req.body;
+    imgArray.push(image);
+    console.log(imgArray)
+    res.redirect("/home")
+})
 app.get("/new", (req,res)=>{
     res.render("new")
-})
-app.post("/home", (req,res)=>{
-    console.log(req.body);  
-    res.redirect("/home")
 })
 
 app.use((err,req,res,next)=>{
