@@ -1,8 +1,8 @@
-const { error } = require("console");
 const express = require("express");
 const app = express();
 const path = require("path");
 const ejsMate = require("ejs-mate");
+
 
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -14,13 +14,13 @@ const imgArray = [ ];
 
 app.get("/home", (req,res,next)=>{
     const image = imgArray;
+    console.log(image)
     res.render("home", {image})
 })
 
 app.post("/home", (req,res)=>{
     const {image} = req.body;
-    imgArray.push(image);
-    console.log(imgArray)
+    imgArray.push(image)
     res.redirect("/home")
 })
 app.get("/new", (req,res)=>{

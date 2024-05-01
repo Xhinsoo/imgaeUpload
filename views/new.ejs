@@ -7,10 +7,14 @@
 </head>
 <body>
     <h1 class="mb-3">Image Upload </h1>
-    <form action="/home" method = "post">
+    <form action="/home" method = "POST">
         <div class="mb-3">
-          <label for="imageUrl" class="form-label" name="image">Image url</label>
-          <input type="text" class="form-control" id="imageUrl" name="image">
+          <label for="imageUrl" class="form-label" >Image url</label>
+          <input type="text" class="form-control" id="url" name="image[url]">
+
+          <label for="imageTitle" class="form-label" >Image Title</label>
+          <input type="text" class="form-control" id="title" name="image[title]">
+
         </div>
      
         <button type="submit" class="btn btn-primary">Submit</button>
