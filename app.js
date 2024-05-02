@@ -17,11 +17,10 @@ app.get("/home", (req, res, next) => {
 });
 
 app.post("/home", upload.array("avatar"), (req, res) => {
-  const { image } = req.body;
-  const {fieldname} = req.files;
+  // const { image } = req.body;
+  // imgArray.push(image);
+  // console.log(imgArray)
   console.log(req.files)
-//   imgArray.push(image, avatar);
-//   console.log(imgArray)
   res.redirect("/home");
 });
 app.get("/new", (req, res) => {
