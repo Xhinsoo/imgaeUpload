@@ -3,6 +3,7 @@ if(process.env.NODE_ENV !=="production"){
 }
 
 
+const mongoose = require("mongoose");
 const express = require("express");
 const app = express();
 const path = require("path");
@@ -11,10 +12,23 @@ const multer = require("multer");
 
 const {storage} = require("./cloudinary")
 const upload = multer({ storage });
-
+const  User = require("./model/user")
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
+
+
+//connecting to mongoDB
+mongoose
+  .connect("mongodb://127.0.0.1:27017/imgUpload")
+  .then(()=>{
+    console.log("connection open")
+  })
+  .catch((e)=>{
+    console.log("error is:", e)
+  });
+
+
 
 const imgArray = [];
 
@@ -33,6 +47,12 @@ app.post("/home", upload.array("avatar"), (req, res) => {
 app.get("/new", (req, res) => {
   res.render("new");
 });
+
+app.get("/login",(req,res)=>{
+  const newUser = new User({email: "user2@gmail.com", userId: "userid2"})
+  newUser.save()
+  res.send(newUser)
+})
 
 app.use((err, req, res, next) => {
   console.log(err.message);
