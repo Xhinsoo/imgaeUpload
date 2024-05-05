@@ -38,10 +38,9 @@ app.get("/home", (req, res, next) => {
 });
 
 app.post("/home", upload.array("avatar"), (req, res) => {
-  // const { image } = req.body;
-  // imgArray.push(image);
-  // console.log(imgArray)
-  console.log(req.files)
+  const { image } = req.body;
+  imgArray.push(image);
+  console.log(req.body)
   res.redirect("/home");
 });
 app.get("/new", (req, res) => {
@@ -49,10 +48,13 @@ app.get("/new", (req, res) => {
 });
 
 app.get("/login",(req,res)=>{
-  const newUser = new User({email: "user2@gmail.com", userId: "userid2"})
-  newUser.save()
-  res.send(newUser)
+  res.render("login")
 })
+
+app.post("/login", (req,res)=>{
+  console.log(req.body.login)
+})
+
 
 app.use((err, req, res, next) => {
   console.log(err.message);
