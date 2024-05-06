@@ -48,11 +48,26 @@ app.get("/new", (req, res) => {
 });
 
 app.get("/login",(req,res)=>{
+  console.log(req.body)
   res.render("login")
 })
 
 app.post("/login", (req,res)=>{
-  console.log(req.body.login)
+  const {email, password} = req.body;
+  const checkUser = 
+  res.redirect("/home")
+})
+
+
+app.get("/register",(req,res)=>{
+  res.render("register")
+})
+
+app.post("/register", (req,res)=>{
+  const newUser = new User(req.body)
+  newUser.save();
+  console.log(newUser)
+  res.redirect("login")    
 })
 
 
