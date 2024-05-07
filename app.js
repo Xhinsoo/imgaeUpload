@@ -34,40 +34,40 @@ const imgArray = [];
 
 app.get("/home", (req, res, next) => {
   const image = imgArray;
-  res.render("home", { image });
+  res.render("pages/home", { image });
 });
 
 app.post("/home", upload.array("avatar"), (req, res) => {
   const { image } = req.body;
   imgArray.push(image);
   console.log(req.body)
-  res.redirect("/home");
+  res.redirect("pages/home");
 });
 app.get("/new", (req, res) => {
-  res.render("new");
+  res.render("pages/new");
 });
 
 app.get("/login",(req,res)=>{
   console.log(req.body)
-  res.render("login")
+  res.render("pages/login")
 })
 
 app.post("/login", (req,res)=>{
   const {email, password} = req.body;
   const checkUser = 
-  res.redirect("/home")
+  res.redirect("pages/home")
 })
 
 
 app.get("/register",(req,res)=>{
-  res.render("register")
+  res.render("pages/register")
 })
 
 app.post("/register", (req,res)=>{
   const newUser = new User(req.body)
   newUser.save();
   console.log(newUser)
-  res.redirect("login")    
+  res.redirect("pages/login")    
 })
 
 
