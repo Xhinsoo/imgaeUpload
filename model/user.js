@@ -3,8 +3,6 @@ const { Schema } = mongoose;
 
 //connecting to mongoDB
 
-
-
 //schema not only define the structure of your document and casting properties,
 //they also define document instance methods and middleware
 const userSchema = new Schema({

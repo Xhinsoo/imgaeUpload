@@ -1,7 +1,6 @@
-if(process.env.NODE_ENV !=="production"){
+if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
-
 
 const mongoose = require("mongoose");
 const express = require("express");
@@ -10,25 +9,23 @@ const path = require("path");
 const ejsMate = require("ejs-mate");
 const multer = require("multer");
 
-const {storage} = require("./cloudinary")
+const { storage } = require("./cloudinary");
 const upload = multer({ storage });
-const  User = require("./model/user")
+const User = require("./model/user");
+const { error } = require("console");
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
-
 //connecting to mongoDB
 mongoose
   .connect("mongodb://127.0.0.1:27017/imgUpload")
-  .then(()=>{
-    console.log("connection open")
+  .then(() => {
+    console.log("connection open");
   })
-  .catch((e)=>{
-    console.log("error is:", e)
+  .catch((e) => {
+    console.log("error is:", e);
   });
-
-
 
 const imgArray = [];
 
@@ -40,35 +37,42 @@ app.get("/home", (req, res, next) => {
 app.post("/home", upload.array("avatar"), (req, res) => {
   const { image } = req.body;
   imgArray.push(image);
-  console.log(req.body)
+  console.log(req.body);
   res.redirect("pages/home");
 });
 app.get("/new", (req, res) => {
   res.render("pages/new");
 });
 
-app.get("/login",(req,res)=>{
-  res.render("pages/login")
-})
+app.get("/login", (req, res) => {
+  res.render("pages/login");
+});
 
-app.post("/login", (req,res)=>{
-  const {email, password} = req.body;
-  res.redirect("home")
-})
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+  res.redirect("home");
+});
 
+app.get("/register", (req, res) => {
+  res.render("pages/register");
+});
 
-app.get("/register",(req,res)=>{
-  res.render("pages/register")
-})
+app.post("/register", async (req, res, next) => {
+  const { email, user } = req.body.register;
+  const newUser = new User({ email, user });
+  const existingUser = await User.find({ email });
 
-app.post("/register", (req,res)=>{
-  const { email, password, user} = req.body.register;
-  const newUser = new User({email, user, password})
-  newUser.save();
-  console.log(newUser)
-  res.redirect("login")    
-})
-
+  try {
+    if (existingUser.length > 0) {
+      throw new Error("existing user");
+    } else {
+      await newUser.save();
+      res.redirect("home");
+    }
+  } catch (e) {
+    next(e);
+  }
+});
 
 app.use((err, req, res, next) => {
   console.log(err.message);
