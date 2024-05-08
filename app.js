@@ -48,14 +48,12 @@ app.get("/new", (req, res) => {
 });
 
 app.get("/login",(req,res)=>{
-  console.log(req.body)
   res.render("pages/login")
 })
 
 app.post("/login", (req,res)=>{
   const {email, password} = req.body;
-  const checkUser = 
-  res.redirect("pages/home")
+  res.redirect("home")
 })
 
 
@@ -64,10 +62,11 @@ app.get("/register",(req,res)=>{
 })
 
 app.post("/register", (req,res)=>{
-  const newUser = new User(req.body)
+  const { email, password, user} = req.body.register;
+  const newUser = new User({email, user, password})
   newUser.save();
   console.log(newUser)
-  res.redirect("pages/login")    
+  res.redirect("login")    
 })
 
 

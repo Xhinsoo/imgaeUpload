@@ -9,6 +9,7 @@ const { Schema } = mongoose;
 //they also define document instance methods and middleware
 const userSchema = new Schema({
   email: String,
+  user :String,
   userId: String,
 });
 
