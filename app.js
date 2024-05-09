@@ -19,7 +19,7 @@ const { error } = require("console");
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
-  session:"secret"
+  secret:"secret"
 }))
 
 app.set("view engine", "ejs");
@@ -39,6 +39,7 @@ const imgArray = [];
 
 app.get("/home", (req, res, next) => {
   const image = imgArray;
+  console.log(req.session)
   res.render("pages/home", { image });
 });
 
