@@ -8,14 +8,22 @@ const app = express();
 const path = require("path");
 const ejsMate = require("ejs-mate");
 const multer = require("multer");
-
+const session = require("express-session");
 const { storage } = require("./cloudinary");
 const upload = multer({ storage });
 const User = require("./model/user");
 const { error } = require("console");
+
+
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
+app.use(session({
+  session:"secret"
+}))
+
 app.set("view engine", "ejs");
+
 
 //connecting to mongoDB
 mongoose
@@ -60,7 +68,7 @@ app.get("/register", (req, res) => {
 app.post("/register", async (req, res, next) => {
   const { email, user } = req.body.register;
   const newUser = new User({ email, user });
-  const existingUser = await User.find({ email });
+  const existingUser = await User.find({ email, user });
 
   try {
     if (existingUser.length > 0) {
