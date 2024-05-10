@@ -9,6 +9,7 @@ const path = require("path");
 const ejsMate = require("ejs-mate");
 const multer = require("multer");
 const session = require("express-session");
+const bcrypt = require("bcrypt");
 const { storage } = require("./cloudinary");
 const upload = multer({ storage });
 const User = require("./model/user");
@@ -39,14 +40,12 @@ const imgArray = [];
 
 app.get("/home", (req, res, next) => {
   const image = imgArray;
-  console.log(req.session)
   res.render("pages/home", { image });
 });
 
 app.post("/home", upload.array("avatar"), (req, res) => {
   const { image } = req.body;
   imgArray.push(image);
-  console.log(req.body);
   res.redirect("pages/home");
 });
 app.get("/new", (req, res) => {
@@ -67,9 +66,11 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", async (req, res, next) => {
-  const { email, user } = req.body.register;
-  const newUser = new User({ email, user });
-  const existingUser = await User.find({ email, user });
+  const { email, user, password } = req.body.register;
+  const hash = await bcrypt.hash(password,12)
+  console.log(password,hash)
+  const newUser = new User({ email, user, hash});
+  const existingUser = await User.find({ user });
 
   try {
     if (existingUser.length > 0) {
