@@ -19,9 +19,12 @@ const { error } = require("console");
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
-app.use(session({
-  secret:"secret"
-}))
+
+// app.use(session({
+//   secret:"secret",
+//   resave: false,
+//   saveUninitialized: false,
+// }))
 
 app.set("view engine", "ejs");
 
