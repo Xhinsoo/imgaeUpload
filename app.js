@@ -15,19 +15,18 @@ const upload = multer({ storage });
 const User = require("./model/user");
 const { error } = require("console");
 
-
-
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 
-// app.use(session({
-//   secret:"secret",
-//   resave: false,
-//   saveUninitialized: false,
-// }))
+app.use(
+  session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
 app.set("view engine", "ejs");
-
 
 //connecting to mongoDB
 mongoose
@@ -59,9 +58,19 @@ app.get("/login", (req, res) => {
   res.render("pages/login");
 });
 
-app.post("/login", (req, res) => {
-  const { email, password } = req.body;
-  res.redirect("home");
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body.login;
+  const registeredUser = await User.find({email});
+
+  console.log(password)
+  if(password === registeredUser.password){
+    res.redirect("home")
+    
+  } else{
+    res.send("invalid credentials")
+    console.log(registeredUser._id)
+ }
+  // res.redirect("home");
 });
 
 app.get("/register", (req, res) => {
@@ -70,15 +79,15 @@ app.get("/register", (req, res) => {
 
 app.post("/register", async (req, res, next) => {
   const { email, user, password } = req.body.register;
-  const hash = await bcrypt.hash(password,12)
-  console.log(password,hash)
-  const newUser = new User({ email, user, hash});
+  const hash = await bcrypt.hash(password, 12);
+  const newUser = new User({ email, user, hash });
   const existingUser = await User.find({ user });
 
   try {
     if (existingUser.length > 0) {
       throw new Error("existing user");
     } else {
+      (req.session.id = existingUser._id), console.log(existingUser._id, req.session.id);
       await newUser.save();
       res.redirect("home");
     }
