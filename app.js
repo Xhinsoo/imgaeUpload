@@ -38,6 +38,12 @@ mongoose
     console.log("error is:", e);
   });
 
+const requireLogin = (req,res,next) => {
+  if(!req.session.user_id){
+    return res.redirect("home")
+  }
+  next()}
+
 const imgArray = [];
 
 app.get("/home", (req, res, next) => {
@@ -50,8 +56,39 @@ app.post("/home", upload.array("avatar"), (req, res) => {
   imgArray.push(image);
   res.redirect("pages/home");
 });
-app.get("/new", (req, res) => {
+
+app.get("/new", requireLogin, (req, res) => {
   res.render("pages/new");
+});
+
+
+app.get("/secret", requireLogin, (req,res)=>{
+  res.send("this is secret")
+})
+
+
+app.get("/register", (req, res) => {
+  res.render("pages/register");
+});
+
+app.post("/register", async (req, res, next) => {
+  const {user, password } = req.body.register;
+  const hash = await bcrypt.hash(password, 12);
+  const newUser = new User({user, hash });
+  const existingUser = await User.findOne({ user });
+  
+  try {
+    if (existingUser) {
+      throw new Error("existing user");
+    } else {
+      await newUser.save();
+      req.session.user_id = newUser._id;
+      // console.log(req.session.id)
+      res.redirect("home");
+    }
+  } catch (e) {
+    next(e);
+  }
 });
 
 app.get("/login", (req, res) => {
@@ -59,41 +96,19 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-  const { email, password } = req.body.login;
-  const registeredUser = await User.find({email});
+  const { user, password } = req.body.login;
+  const registeredUser = await User.findOne({user});
+  // console.log(registeredUser)
 
-  console.log(password)
-  if(password === registeredUser.password){
-    res.redirect("home")
-    
-  } else{
-    res.send("invalid credentials")
-    console.log(registeredUser._id)
- }
-  // res.redirect("home");
-});
+  if(!registeredUser){
+    return res.send("invalid email")
+  } 
+  if(registeredUser.password !== password){
 
-app.get("/register", (req, res) => {
-  res.render("pages/register");
-});
-
-app.post("/register", async (req, res, next) => {
-  const { email, user, password } = req.body.register;
-  const hash = await bcrypt.hash(password, 12);
-  const newUser = new User({ email, user, hash });
-  const existingUser = await User.find({ user });
-
-  try {
-    if (existingUser.length > 0) {
-      throw new Error("existing user");
-    } else {
-      (req.session.id = existingUser._id), console.log(existingUser._id, req.session.id);
-      await newUser.save();
-      res.redirect("home");
-    }
-  } catch (e) {
-    next(e);
+   return res.send("invalid password");
   }
+  req.session.user_id = registeredUser._id;
+  res.redirect("home")
 });
 
 app.use((err, req, res, next) => {
