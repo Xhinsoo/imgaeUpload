@@ -83,7 +83,6 @@ app.post("/register", async (req, res, next) => {
     } else {
       await newUser.save();
       req.session.user_id = newUser._id;
-      // console.log(req.session.id)
       res.redirect("home");
     }
   } catch (e) {
