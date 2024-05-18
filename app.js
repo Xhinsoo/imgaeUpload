@@ -74,7 +74,7 @@ app.get("/register", (req, res) => {
 app.post("/register", async (req, res, next) => {
   const {user, password } = req.body.register;
   const hash = await bcrypt.hash(password, 12);
-  const newUser = new User({user, hash });
+  const newUser = new User({user, password });
   const existingUser = await User.findOne({ user });
   
   try {
@@ -97,13 +97,12 @@ app.get("/login", (req, res) => {
 app.post("/login", async (req, res) => {
   const { user, password } = req.body.login;
   const registeredUser = await User.findOne({user});
-  // console.log(registeredUser)
+  console.log(req.body.login)
 
   if(!registeredUser){
     return res.send("invalid email")
   } 
   if(registeredUser.password !== password){
-
    return res.send("invalid password");
   }
   req.session.user_id = registeredUser._id;
