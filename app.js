@@ -13,6 +13,7 @@ const bcrypt = require("bcrypt");
 const { storage } = require("./cloudinary");
 const upload = multer({ storage });
 const User = require("./model/user");
+const Image = require("./model/image")
 const { error } = require("console");
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -44,20 +45,21 @@ const requireLogin = (req,res,next) => {
   }
   next()}
 
-const imgArray = [];
 
-app.get("/home", (req, res, next) => {
-  const image = imgArray;
-  res.render("pages/home", { image });
+app.get("/home", async (req, res, next) => {
+  const image = await Image.find({});
+  console.log(image)
+  res.render("pages/home", {image});
 });
 
-app.post("/home", upload.array("avatar"), (req, res) => {
-  const { image } = req.body;
-  imgArray.push(image);
-  res.redirect("pages/home");
+app.post("/home", upload.array("avatar"), async(req, res) => {
+  const { url,title } = req.body.image;
+  const newImage = new Image({url, title}); 
+  await newImage.save()
+  res.redirect("home");
 });
 
-app.get("/new", requireLogin, (req, res) => {
+app.get("/new",  (req, res) => {
   res.render("pages/new");
 });
 
@@ -97,8 +99,6 @@ app.get("/login", (req, res) => {
 app.post("/login", async (req, res) => {
   const { user, password } = req.body.login;
   const registeredUser = await User.findOne({user});
-  console.log(req.body.login)
-
   if(!registeredUser){
     return res.send("invalid email")
   } 
