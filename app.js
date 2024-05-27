@@ -15,6 +15,7 @@ const upload = multer({ storage });
 const User = require("./model/user");
 const Image = require("./model/image")
 const { error } = require("console");
+const homeRoutes = require("./router/home")
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
@@ -27,6 +28,7 @@ app.use(
   })
 );
 
+app.use("/", homeRoutes)
 app.set("view engine", "ejs");
 
 //connecting to mongoDB
@@ -46,11 +48,7 @@ const requireLogin = (req,res,next) => {
   next()}
 
 
-app.get("/home", async (req, res, next) => {
-  const image = await Image.find({});
-  console.log(image)
-  res.render("pages/home", {image});
-});
+
 
 app.post("/home", upload.array("avatar"), async(req, res) => {
   const { url,title } = req.body.image;
