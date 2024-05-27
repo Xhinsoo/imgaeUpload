@@ -50,12 +50,6 @@ const requireLogin = (req,res,next) => {
 
 
 
-app.post("/home", upload.array("avatar"), async(req, res) => {
-  const { url,title } = req.body.image;
-  const newImage = new Image({url, title}); 
-  await newImage.save()
-  res.redirect("home");
-});
 
 app.get("/new",  (req, res) => {
   res.render("pages/new");
