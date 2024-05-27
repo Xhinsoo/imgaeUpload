@@ -15,7 +15,10 @@ const upload = multer({ storage });
 const User = require("./model/user");
 const Image = require("./model/image")
 const { error } = require("console");
-const homeRoutes = require("./router/home")
+const homeRoutes = require("./router/home");
+const newRoutes = require("./router/new");
+const registerRoutes=  require("./router/register");
+const loginRoutes = require("./router/login")
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
@@ -28,7 +31,6 @@ app.use(
   })
 );
 
-app.use("/", homeRoutes)
 app.set("view engine", "ejs");
 
 //connecting to mongoDB
@@ -49,11 +51,11 @@ const requireLogin = (req,res,next) => {
 
 
 
-
-
-app.get("/new",  (req, res) => {
-  res.render("pages/new");
-});
+//routes
+app.use("/", homeRoutes)
+app.use("/", newRoutes)
+app.use("/",registerRoutes)
+app.use("/",loginRoutes)
 
 
 app.get("/secret", requireLogin, (req,res)=>{
@@ -61,45 +63,10 @@ app.get("/secret", requireLogin, (req,res)=>{
 })
 
 
-app.get("/register", (req, res) => {
-  res.render("pages/register");
-});
 
-app.post("/register", async (req, res, next) => {
-  const {user, password } = req.body.register;
-  const hash = await bcrypt.hash(password, 12);
-  const newUser = new User({user, password });
-  const existingUser = await User.findOne({ user });
-  
-  try {
-    if (existingUser) {
-      throw new Error("existing user");
-    } else {
-      await newUser.save();
-      req.session.user_id = newUser._id;
-      res.redirect("home");
-    }
-  } catch (e) {
-    next(e);
-  }
-});
 
-app.get("/login", (req, res) => {
-  res.render("pages/login");
-});
 
-app.post("/login", async (req, res) => {
-  const { user, password } = req.body.login;
-  const registeredUser = await User.findOne({user});
-  if(!registeredUser){
-    return res.send("invalid email")
-  } 
-  if(registeredUser.password !== password){
-   return res.send("invalid password");
-  }
-  req.session.user_id = registeredUser._id;
-  res.redirect("home")
-});
+
 
 app.use((err, req, res, next) => {
   console.log(err.message);
