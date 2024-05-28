@@ -18,7 +18,8 @@ const { error } = require("console");
 const homeRoutes = require("./router/home");
 const newRoutes = require("./router/new");
 const registerRoutes=  require("./router/register");
-const loginRoutes = require("./router/login")
+const loginRoutes = require("./router/login");
+const secretRoutes = require("./router/secret");
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
@@ -54,18 +55,9 @@ const requireLogin = (req,res,next) => {
 //routes
 app.use("/", homeRoutes)
 app.use("/", newRoutes)
-app.use("/",registerRoutes)
-app.use("/",loginRoutes)
-
-
-app.get("/secret", requireLogin, (req,res)=>{
-  res.send("this is secret")
-})
-
-
-
-
-
+app.use("/", registerRoutes)
+app.use("/", loginRoutes)
+app.use("/", secretRoutes)
 
 
 app.use((err, req, res, next) => {
