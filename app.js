@@ -32,6 +32,7 @@ app.use(
   })
 );
 
+app.set("views",path.join(__dirname,"views/pages"));
 app.set("view engine", "ejs");
 
 //connecting to mongoDB
@@ -58,6 +59,10 @@ app.use("/", newRoutes)
 app.use("/", registerRoutes)
 app.use("/", loginRoutes)
 app.use("/", secretRoutes)
+
+app.get("/show", (req,res)=>{
+  res.render("show")
+})
 
 
 app.use((err, req, res, next) => {

@@ -8,7 +8,7 @@ const upload = multer({ storage });
 
 
 router.get("/login", (req, res) => {
-    res.render("pages/login");
+    res.render("login");
   });
   
 router.post("/login", async (req, res) => {

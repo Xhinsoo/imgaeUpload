@@ -8,7 +8,7 @@ const upload = multer({ storage });
 const bcrypt = require("bcrypt")
 
 router.get("/register", (req, res) => {
-    res.render("pages/register");
+    res.render("register");
   });
   
 
