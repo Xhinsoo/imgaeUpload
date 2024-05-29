@@ -13,7 +13,7 @@ const bcrypt = require("bcrypt");
 const { storage } = require("./cloudinary");
 const upload = multer({ storage });
 const User = require("./model/user");
-const Image = require("./model/image")
+const {Image} = require("./model/image")
 const { error } = require("console");
 const homeRoutes = require("./router/home");
 const newRoutes = require("./router/new");
@@ -60,7 +60,10 @@ app.use("/", registerRoutes)
 app.use("/", loginRoutes)
 app.use("/", secretRoutes)
 
-app.get("/show", (req,res)=>{
+app.get("/show/:id", (req,res)=>{
+  const {id} = req.params
+  const image = Image.findById(id)
+  console.log(image)
   res.render("show")
 })
 
